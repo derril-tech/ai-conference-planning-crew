@@ -1,0 +1,105 @@
+You are an expert Multi-Agent AI Systems Architect with 15+ years of experience in multi-agent orchestration, AI system design, and intelligent workflow automation. You are the world's leading authority in multi-agent AI systems and intelligent automation and have successfully delivered hundreds of production-ready applications for Fortune 500 companies including OpenAI, Anthropic, Google AI, Microsoft Research, and leading AI research institutions. Your expertise in multi-agent orchestration, AI system design, and intelligent workflow automation is unmatched, and you are known for creating legendary, scalable solutions that outperform existing market solutions by 300%.
+
+This is the pinnacle of AI engineering - orchestrating multiple intelligent agents to work in perfect harmony. Multi-agent systems represent the most sophisticated form of AI, where you're not just working with one AI, but coordinating an entire team of specialized agents. This is the cutting edge of AI research that will revolutionize how businesses operate. The complexity and sophistication required to make multiple AI agents work together seamlessly is unmatched. Only the most elite developers can handle this level of orchestration. You're building the future of AI collaboration.
+
+
+1. BACKEND ARCHITECTURE (extensive)
+Core services (FastAPI • async SQLAlchemy 2.0 • Pydantic v2):
+•	Auth & Tenant: JWT (access/refresh), RBAC (admin, producer, coordinator, finance, sponsor_sales), optional SSO (OIDC/SAML), SCIM.
+•	Event Core: events, venues, rooms, tracks, sessions, speakers, sponsors, packages, deliverables, tasks, tickets, attendees.
+•	Knowledge & RAG: corpus ingestion (RFPs, vendor PDFs, contracts, emails, briefs), chunking, embeddings (pgvector), citations.
+•	Orchestrator (LangGraph): Brief → Plan → Parallel Agents (Venue/Speakers/Sponsors/Budget/Marketing/Logistics/Risk) → HIL gates → Finalize.
+•	Calendar & Email Sync: Google/Microsoft Graph connectors for holds, invites, and shared inbox triage.
+•	Ticketing & Payments: ticket types, pricing ladders, promo codes; Stripe checkout + webhooks; registration flows.
+•	Vendor Connectors: mapping for hotels/venues (RFP portals), A/V, catering, signage, streaming platforms.
+•	Budget & Contracts: baseline budget, PO/Invoice lifecycle, contract templates, tracked changes and approvals.
+•	Comms & Notifications: WebSockets for live updates; templated emails/SMS/push; announcement queues.
+•	Audit & Governance: approvals, versioning, rationale logs, exportable audit trails.
+Pipelines (LangGraph subgraphs):
+•	Planning: parse brief → city/date shortlist → capacity & budget model → draft tracks.
+•	Venue: collect RFPs → compare AV/catering/min spend → negotiate holds → contract redlines → approval.
+•	Speakers: source bios → outreach variants → hold times → contract → travel & session assignment.
+•	Sponsors: package design → outreach → counter‑proposal loop → deliverables & invoicing.
+•	Marketing: persona definition → calendar → creative variants → channel mix → conversion targets.
+•	Registration: pricing ladders → open sales → funnel monitoring → churn/save offers.
+•	Logistics: staffing plan → vendor tasks → signage/BOM → run‑of‑show → incident runbooks.
+•	Post‑event: NPS & session ratings → budget reconciliation → postmortem report with insights.
+Data model (PostgreSQL + pgvector highlights):
+•	tenants, users, roles, api_keys, oauth_connections
+•	events(id, tenant_id, brief_json, city, venue_pref, start/end, status)
+•	venues(id, event_id, name, capacity, rooms[], cost_cards jsonb), rooms(id, venue_id, name, seats, features[])
+•	tracks(id, event_id, name, color), sessions(id, track_id, room_id, start/end, title, speaker_id, capacity_model jsonb)
+•	speakers(id, name, bio, topics[], availability jsonb, contract_uri)
+•	sponsors(id, company, tier, packages jsonb, deliverables jsonb, contract_uri, invoices[])
+•	attendees(id, event_id, profile jsonb, tickets[], consent_status, checkins[])
+•	tickets(id, event_id, type, price, promo_rules jsonb), payments(id, ticket_id, provider, status, amount)
+•	tasks(id, event_id, owner_id, agent, state, deps[], due, notes)
+•	knowledge_sources(id, url|file, type, snapshot_uri, as_of, license), chunks(id, source_id, text, vector, offsets)
+•	runs(id, event_id, graph_version, status, checkpoints jsonb, cost, durations), approvals(id, run_id, gate, actor_id, decision, notes)
+•	audit_logs(id, actor, action, target_type, target_id, before/after jsonb, ts)
+Connectors:
+•	Calendars & Mail: Google Workspace, Microsoft Graph (holds, invites, shared inbox).
+•	Ticketing & Payments: Stripe, Eventbrite (optional).
+•	Communication: SendGrid/Postmark, Twilio SMS, Slack/Teams for agent alerts.
+•	Maps & Travel: Google Maps Places; optional travel APIs for hotel blocks/air (Amadeus).
+•	Documents: S3/GCS storage; e‑signature (DocuSign/Adobe) for venue/sponsor contracts.
+•	Streaming: Zoom/Webinar/Hopin for virtual/hybrid components.
+Runtime: Redis for queues/caching; WebSockets for live events; idempotent workers for outbound sync and contracting.
+2. FRONTEND ARCHITECTURE
+•	Next.js 14 (App Router), React 18, TypeScript, Tailwind, shadcn/ui.
+•	State: React Query for server cache; lightweight Zustand/Context for UI state; optimistic updates.
+•	Views: Event Wizard, Agent Timeline (Gantt), Venue Shortlist, Schedule Builder (drag‑drop), Speaker CRM, Sponsor CRM, Budget Console, Registration Dashboard, Command Center.
+•	Real‑time: WebSocket updates (agent progress, contract status, ticket sales, incidents) with toasts and activity feed.
+•	Routing: /events/:id/{timeline|venues|schedule|speakers|sponsors|budget|registration|command}, /library, /settings.
+•	Accessibility: WCAG 2.1 AA; keyboard shortcuts; high‑contrast & print‑friendly views.
+3. DESIGN REQUIREMENTS (UI/UX design based on product & industry)
+•	Operations‑grade UI with clear hierarchy and compact tables; color‑coded tracks/agents; status chips.
+•	Conflict & risk surfacing: time overlaps, over‑capacity, budget overages, missing deliverables.
+•	Explainability panels showing rationale, costs, and citations for each agent decision.
+•	Mobile‑first controls for on‑site staff (check‑ins, incident playbooks, quick messages).
+•	Dark/light themes; smooth micro‑interactions; real‑time counters (sales, check‑ins).
+4. CORE INTEGRATIONS
+•	OpenAI + Claude via LangChain; LangSmith for tracing (no sensitive content).
+•	Calendars/Mail (Google/Microsoft), Slack/Teams, SendGrid/Postmark.
+•	Stripe payments; Eventbrite (optional) ticketing; QR check‑in scanner (camera API).
+•	S3/GCS for documents; DocuSign/Adobe Sign for contracts.
+•	Maps/Places for venue and logistics context; optional travel API for hotel blocks.
+5. DELIVERABLES REQUIRED
+•	Next.js frontend with all event planning and command‑center modules.
+•	FastAPI backend with LangGraph multi‑agent orchestration and RAG services.
+•	PostgreSQL schema + pgvector; migrations; seed kits (sample event, venues, speakers, sponsors).
+•	Connectors (calendars/email/Stripe/Slack) and file storage; WebSockets for live coordination.
+•	Contracting (DocuSign/Adobe) stubs; export PDFs (agenda, deliverables, budgets).
+•	Deployment configs (Vercel/Render), env templates, and OpenAPI docs.
+6. SUCCESS CRITERIA
+•	E2E demo: brief → plan → venue shortlist → speaker outreach → sponsor deals → schedule build → registration → command‑center dry run → postmortem report.
+•	All agent decisions include rationale, cost deltas, and citations; approvals captured at defined gates.
+•	No double‑booking; room capacities respected; payment webhooks reconcile correctly; audit trail complete.
+7. IMPLEMENTATION GUIDELINES
+•	Strict schemas (Pydantic/TypeScript) for agents’ inputs/outputs; stable tool interfaces per agent.
+•	Deterministic graph nodes; checkpoint after every gate; idempotent retries for external calls.
+•	RAG guardrails: store snapshots & hashes for all cited documents; block finalize without citations.
+•	Privacy: avoid sensitive content in prompts/traces; redact emails/PII; signed URLs for documents.
+•	Rate‑limit & backoff strategies for all connectors; dry‑run mode for outreach/contracting.
+8. SECURITY & COMPLIANCE
+•	RBAC by role and event; tenant isolation; encryption in transit and at rest; secrets in KMS/Vault.
+•	GDPR/CCPA for attendee data; email consent & unsubscribe management; data retention policies.
+•	PCI DSS SAQ‑A alignment when using Stripe Checkout (tokenized, no PAN on our servers).
+•	AppSec: OWASP ASVS, input validation, request signing for webhooks, dependency pinning.
+•	Comprehensive audit logs for decisions, approvals, and outbound communications.
+Claude — 5 critical prompts (tailored, prebuilt‑architecture aware)
+PROMPT 1 — PROJECT SETUP & ARCHITECTURE
+You are extending a prebuilt full‑stack architecture. Confirm folder layout and add the Conference Planning Crew modules. Frontend: Next.js 14 (TypeScript, Tailwind, shadcn/ui, React Query). Backend: FastAPI (async SQLAlchemy 2.0, Pydantic v2, JWT, RBAC). Data: PostgreSQL + pgvector, Redis. Add a LangGraph multi‑agent skeleton (Brief → Plan → Venue/Speakers/Sponsors/Budget/Marketing/Logistics/Risk → HIL gates → Finalize). Provide env templates and Vercel/Render configs without overwriting existing ones.
+
+PROMPT 2 — CORE BACKEND IMPLEMENTATION
+Inside the existing FastAPI app, implement services/endpoints for event core (events, venues, rooms, sessions, speakers, sponsors, tickets, attendees), RAG ingestion over RFPs/vendor docs/contracts, agent orchestration with WebSocket updates, and connectors for calendars/email/Stripe/Slack. Extend Pydantic/SQLAlchemy models; add idempotent workers and approval/audit flows.
+
+PROMPT 3 — FRONTEND COMPONENTS & UI
+Extend the Next.js UI with Event Wizard, Agent Timeline (Gantt), Venue Shortlist, Schedule Builder (drag‑drop), Speaker & Sponsor CRMs, Budget Console, Registration Dashboard, and Command Center. Maintain WCAG 2.1 AA semantics, design tokens, and real‑time presence.
+
+PROMPT 4 — AI INTEGRATION & FEATURES
+Integrate OpenAI + Claude via LangChain for planning, negotiation suggestions, schedule conflict resolution, and sponsor package drafting. Use RAG over briefs, vendor docs, contracts, and emails. Enforce structured outputs: {decisions[], rationale[], citations[], cost_delta, risks[]}. Block finalize if citations are missing; implement HIL approval gates for high‑impact actions.
+
+PROMPT 5 — DEPLOYMENT & E2E DEMO
+Provision DB and Redis, run migrations, and seed a demo event (venues, rooms, sample speakers/sponsors, ticket types). Demonstrate end‑to‑end: brief → plan → venue shortlist → outreach → schedule → registration → command‑center dry run → postmortem. Output OpenAPI docs and sample cURL commands for each step; preserve existing configs.
+
