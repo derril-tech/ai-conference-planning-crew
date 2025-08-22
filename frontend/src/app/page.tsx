@@ -5,32 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-conference-50 to-conference-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-conference-600">OrchestrateX</h1>
-              </div>
-            </div>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/about" className="text-gray-700 hover:text-conference-600">About</Link>
-              <Link href="/dashboard" className="text-gray-700 hover:text-conference-600">Dashboard</Link>
-              <Link href="/events" className="text-gray-700 hover:text-conference-600">Events</Link>
-            </nav>
-            <div className="flex items-center space-x-4">
-              <Button variant="outline" asChild>
-                <Link href="/login">Sign In</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/register">Get Started</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center">

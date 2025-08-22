@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: orchestratex-postgres
+    environment:
+      POSTGRES_DB: orchestratex
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - orchestratex-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: orchestratex-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - orchestratex-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: orchestratex-backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/orchestratex
+      - REDIS_URL=redis://redis:6379
+      - SECRET_KEY=your-secret-key-here
+      - DEBUG=true
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+    networks:
+      - orchestratex-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: orchestratex-frontend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - orchestratex-network
+    command: npm run dev
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  orchestratex-network:
+    driver: bridge
